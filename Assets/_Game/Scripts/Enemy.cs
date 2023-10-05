@@ -19,6 +19,8 @@ public class Enemy : Character
     private Character target;
     public Character Target => target;
 
+    
+
     private void Update()
     {
         if (currentState != null && !IsDead)

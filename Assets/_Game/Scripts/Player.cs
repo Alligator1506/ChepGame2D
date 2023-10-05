@@ -11,7 +11,7 @@ public class Player : Character
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float speed = 5;
 
-    [SerializeField] private float jumpForce = 350;
+    [SerializeField] private float jumpForce = 8;
 
     [SerializeField] private Kunai kunaiPrefab;
     [SerializeField] private Transform throwPoint;
@@ -24,7 +24,7 @@ public class Player : Character
 
     private float horizontal;
 
-    
+    int numberOfJumps = 0;
 
     private int coin = 0;
 
@@ -135,19 +135,10 @@ public class Player : Character
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.1f, groundLayer);
 
-        //if (hit.collider != null)
-        //{
-        //    return true;
-        //}
-        //else 
-        //{
-        //    return false; 
-        //}
-
         return hit.collider != null;
     }
 
-    private void Attack()
+    public void Attack()
     {
         ChangeAnim("attack");
         isAttack = true;
@@ -156,7 +147,7 @@ public class Player : Character
         Invoke(nameof(DeActiveAttack), 0.5f);
     }
 
-    private void Throw()
+    public void Throw()
     {   
         ChangeAnim("throw");
         isAttack = true;
@@ -171,13 +162,28 @@ public class Player : Character
         ChangeAnim("idle");
     }
 
-    private void Jump()
+    public void Jump()
     {
+
         if (isGrounded)
         {
+            numberOfJumps = 0;
             isJumping = true;
             ChangeAnim("jump");
-            rb.AddForce(jumpForce * Vector2.up);
+            //rb.AddForce(jumpForce * Vector2.up);
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            numberOfJumps++;
+        }
+        else
+        {
+            if (numberOfJumps == 1)
+            {
+                isJumping = true;
+                ChangeAnim("jump");
+                //rb.AddForce(jumpForce * Vector2.up);
+                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+                numberOfJumps++;
+            }
         }
     }
    
@@ -217,30 +223,30 @@ public class Player : Character
         }
     }
 
-    public void AttackTouch()
-    {
-        ChangeAnim("attack");
-        isAttack = true;
-        Invoke(nameof(ResetAttack), 0.5f);
-        ActiveAttack();
-        Invoke(nameof(DeActiveAttack), 0.5f);
-    }
+    //public void AttackTouch()
+    //{
+    //    ChangeAnim("attack");
+    //    isAttack = true;
+    //    Invoke(nameof(ResetAttack), 0.5f);
+    //    ActiveAttack();
+    //    Invoke(nameof(DeActiveAttack), 0.5f);
+    //}
 
-    public void ThrowTouch()
-    {
-        ChangeAnim("throw");
-        isAttack = true;
-        Invoke(nameof(ResetAttack), 0.5f);
+    //public void ThrowTouch()
+    //{
+    //    ChangeAnim("throw");
+    //    isAttack = true;
+    //    Invoke(nameof(ResetAttack), 0.5f);
 
-        Instantiate(kunaiPrefab, throwPoint.position, throwPoint.rotation);
-    }
-    public void JumpTouch()
-    {
-        if (isGrounded)
-        {
-            isJumping = true;
-            ChangeAnim("jump");
-            rb.AddForce(jumpForce * Vector2.up);
-        }
-    }
+    //    Instantiate(kunaiPrefab, throwPoint.position, throwPoint.rotation);
+    //}
+    //public void JumpTouch()
+    //{
+    //    if (isGrounded)
+    //    {
+    //        isJumping = true;
+    //        ChangeAnim("jump");
+    //        rb.AddForce(jumpForce * Vector2.up);
+    //    }
+    //}
 }
